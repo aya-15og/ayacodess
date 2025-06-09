@@ -880,15 +880,15 @@
             <p style="font-size: 1.2rem; margin-bottom: 40px; opacity: 0.9;">
                 Ready to collaborate on something amazing? Let's build the future together!
             </p>
-            <form class="contact-form">
+            <form class="contact-form" id="contact-form">
                 <div class="form-group">
-                    <input type="text" placeholder="Your Name" required>
+                    <input type="text" name="name" placeholder="Your Name" required>
                 </div>
                 <div class="form-group">
-                    <input type="email" placeholder="Your Email" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
                 </div>
                 <div class="form-group">
-                    <textarea rows="5" placeholder="Your Message" required></textarea>
+                    <textarea rows="5" name="message" placeholder="Your Message" required></textarea>
                 </div>
                 <button type="submit" class="submit-btn">Send Message</button>
             </form>
@@ -904,3 +904,78 @@
         </div>
         <p>&copy; 2025 Aya Codes. Crafted with <i class="fas fa-heart" style="color: #f584aa;"></i>.</p>
     </footer>
+
+    <script>
+        // Custom cursor
+        const cursor = document.querySelector('.custom-cursor');
+        const trailElements = [];
+
+        // Create cursor trail elements
+        for (let i = 0; i < 10; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            document.body.appendChild(trail);
+            trailElements.push(trail);
+        }
+
+        let mouseX = 0, mouseY = 0;
+        let trailX = 0, trailY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            cursor.style.left = mouseX - 10 + 'px';
+            cursor.style.top = mouseY - 10 + 'px';
+        });
+
+        // Animate cursor trail
+        function animateTrail() {
+            trailX += (mouseX - trailX) * 0.1;
+            trailY += (mouseY - trailY) * 0.1;
+            
+            trailElements.forEach((trail, index) => {
+                const delay = index * 2;
+                trail.style.left = (trailX - delay) + 'px';
+                trail.style.top = (trailY - delay) + 'px';
+                trail.style.opacity = 1 - (index * 0.1);
+            });
+            
+            requestAnimationFrame(animateTrail);
+        }
+
+        animateTrail();
+
+            document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message')
+            };
+            
+            try {
+                const response = await fetch('https://formspree.io/f/mdkzezzb', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Message sent successfully!');
+                    this.reset();
+                } else {
+                    alert('Error sending message. Please try again.');
+                }
+            } catch (error) {
+                alert('Error sending message. Please try again.');
+            }
+        });
+    </script>
+    
+</body>
+</html>
